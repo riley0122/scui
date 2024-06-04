@@ -3,3 +3,12 @@ SCUI - Simple Cross-platform User Interface
 =========================
 
 A library for C++ for simple cross platform user interfaces.
+
+=========================
+
+Make targets:
+
+make all                Build and test everything automatically
+make build/scui.a       Build the library
+make test               Build and run all tests
+make clean              Remove all the built files
