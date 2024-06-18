@@ -4,23 +4,47 @@
 #define SCUI_LOG_MODE scui::LogMode::BAD
 #endif
 
+#if defined(_WIN32)
+    #define PLATFORM "Windows"
+    #include <windows.h>
+#elif defined(__APPLE__)
+    #define PLATFORM "Mac"
+#elif defined(__linux__)
+    #define PLATFORM "Linux"
+#elif defined(BSD)
+    #define PLATFORM "BSD"
+#else
+    #define PLATFORM "Unknown"
+#endif
+
 #include <string>
 
 namespace scui
 {
+    namespace {
+        std::wstring stringToWideString(const std::string& str) {
+            std::wstring wstr(str.begin(), str.end());
+            return wstr;
+        }
+
+        const wchar_t* wideStringToCWcharArray(const std::wstring& wideString) {
+            return wideString.c_str();
+        }
+    }
+
     enum class LogLevel {
         TRACE,
         DEBUG,
         INFO,
         WARN,
-        ERROR,
+        _ERROR,
         FATAL
     };
 
     enum class LogMode {
         NONE,
         BAD,
-        ERROR,
+        _ERROR,
         ALL
     };
 
@@ -35,7 +59,7 @@ namespace scui
             return "Info";
         case LogLevel::WARN:
             return "Warn";
-        case LogLevel::ERROR:
+        case LogLevel::_ERROR:
             return "Error";
         case LogLevel::FATAL:
             return "Fatal";
@@ -45,4 +69,22 @@ namespace scui
     }
 
     void log(std::string msg, LogLevel level);
+
+    class Window {
+    public:
+        Window(std::string window_name);
+        ~Window();
+
+        bool Rename(std::string window_name);
+        bool Resize(unsigned int w, unsigned h);
+        bool Create(int w=-1, int h=-1);
+
+    private:
+        std::string window_name;
+        unsigned int width;
+        unsigned int height;
+
+        bool WindowsCreate();
+        bool LinuxCreate();
+    };
 } // namespace scui
