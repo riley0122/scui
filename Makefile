@@ -3,6 +3,12 @@ CXXFLAGS=-Wall -std=c++11
 SRC_DIR=src
 OBJ_DIR=obj
 
+ifeq ($(OS),Windows_NT)
+	PREFIX=powershell
+else
+	PREFIX=:
+endif
+
 SRCS=$(wildcard $(SRC_DIR)/**/*.cpp)
 OBJS=$(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
@@ -12,25 +18,26 @@ build/tests/init_test: Test/test_init.cpp | build/tests
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	@mkdir -p $(@D)
+	@$(PREFIX) mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build:
-	mkdir -p build
+	$(PREFIX) mkdir -p build
 
 build/tests:
-	mkdir -p build/tests
+	$(PREFIX) mkdir -p build/tests
 
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	$(PREFIX) mkdir -p $(OBJ_DIR)
 
 clean:
-	rm -rf $(OBJ_DIR) build
+	$(PREFIX) rm -r $(OBJ_DIR) build
 
 test: build/tests/init_test
 	./build/tests/init_test
 
 targets:
+	@echo "Using prefix '$(PREFIX)' for os '$(OS)'"
 	@echo "This is a list of all make targets"
 	@echo "make all\t\tBuild and test everything automatically"
 	@echo "make test\t\tBuild and run all tests"
