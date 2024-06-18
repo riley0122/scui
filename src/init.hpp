@@ -37,6 +37,7 @@ namespace scui
         DEBUG,
         INFO,
         WARN,
+        // _ERROR instead of ERROR because ERROR is defined as 0 in windows.h
         _ERROR,
         FATAL
     };
@@ -44,6 +45,7 @@ namespace scui
     enum class LogMode {
         NONE,
         BAD,
+        // _ERROR instead of ERROR because ERROR is defined as 0 in windows.h
         _ERROR,
         ALL
     };
