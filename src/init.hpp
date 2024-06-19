@@ -21,6 +21,8 @@
 
 namespace scui
 {
+    LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
     namespace {
         std::wstring stringToWideString(const std::string& str) {
             std::wstring wstr(str.begin(), str.end());

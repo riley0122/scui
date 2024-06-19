@@ -1,32 +1,6 @@
 #include "init.hpp"
 #include <iostream>
 
-#ifdef _WIN32
-HINSTANCE g_hInstance;
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
-    g_hInstance = hInstance;
-}
-
-void OnSize(HWND hwnd, UINT flag, int width, int height) {
-    scui::log("Resize event called", scui::LogLevel::TRACE);
-    // Handle resizing
-}
-
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
-    case WM_SIZE:
-        {
-            int width = LOWORD(lParam);  // Macro to get the low-order word.
-            int height = HIWORD(lParam); // Macro to get the high-order word.
-
-            // Respond to the message:
-            OnSize(hwnd, (UINT)wParam, width, height);
-        }
-        break;
-    }
-}
-#endif
-
 namespace scui {
     void log(std::string msg, LogLevel level) {
         if (SCUI_LOG_MODE == LogMode::NONE)
@@ -35,6 +9,21 @@ namespace scui {
             std::cout << "[scui] " << GetLogLevelString(level) << ": " << msg;
         }
     };
+
+    LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+        switch (uMsg)
+        {
+        case WM_SIZE:
+            log("Resize event called", LogLevel::TRACE);
+            break;
+        
+        default:
+            log("Some other event called", LogLevel::TRACE);
+            break;
+        }
+
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    }
 
     Window::Window(std::string window_name) {
         if (PLATFORM == "Unknown") {
@@ -46,6 +35,10 @@ namespace scui {
         }
 
         this->window_name = window_name;
+    }
+
+    Window::~Window() {
+        // TODO: Clean up.
     }
 
     bool Window::Rename(std::string window_name) {
@@ -77,20 +70,50 @@ namespace scui {
             return WindowsCreate();
         else if (PLATFORM == "Linux")
             return LinuxCreate();
+
+        return false;
+    }
+
+    bool Window::LinuxCreate() {
+        return false;
     }
 
     bool Window::WindowsCreate() {
-        const std::wstring wide = stringToWideString(this->window_name);
-        const wchar_t* CLASS_NAME = wideStringToCWcharArray(wide);
+        // Initialize properties
+        const wchar_t CLASS_NAME[] = L"SCUI window class";
 
-        // Dont know if this will compile on linux because no windows.h
-        // Need to check and possibly fix.
-        WNDCLASS wc = {  };
+        WNDCLASS wc = { };
 
-        wc.lpfnWndProc   = WindowProc;
-        wc.hInstance     = g_hInstance;
+        wc.lpfnWndProc = WindowProc;
+        wc.hInstance = GetModuleHandle(NULL);
         wc.lpszClassName = CLASS_NAME;
 
         RegisterClass(&wc);
+
+        const wchar_t* window_name = wideStringToCWcharArray(stringToWideString(this->window_name));
+
+        // Create the window
+        HWND hwnd = CreateWindowEx(
+            0,
+            CLASS_NAME,
+            window_name,
+            WS_OVERLAPPEDWINDOW,
+
+            CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
+
+            NULL,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+
+        if (hwnd == NULL) {
+            log("Failed to create window!", LogLevel::_ERROR);
+            return false;
+        }
+
+        ShowWindow(hwnd, SW_SHOW);
+
+        return true;
     }
 }
