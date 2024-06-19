@@ -1,4 +1,4 @@
-#include "../src/init.hpp"
+#include "../scui.hpp"
 #include "test_lib.hpp"
 
 bool testGettingLevelName() {

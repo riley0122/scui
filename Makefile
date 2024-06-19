@@ -17,6 +17,9 @@ all: build test
 build/tests/init_test: Test/test_init.cpp | build/tests
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
+build/tests/create_test: Test/test_create.cpp | build/tests
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	@$(PREFIX) mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -33,8 +36,9 @@ $(OBJ_DIR):
 clean:
 	$(PREFIX) rm -r $(OBJ_DIR) build
 
-test: build/tests/init_test
+test: build/tests/init_test build/tests/create_test
 	./build/tests/init_test
+	./build/tests/create_test
 
 targets:
 	@echo "Using prefix '$(PREFIX)' for os '$(OS)'"
