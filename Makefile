@@ -9,16 +9,16 @@ else
 	PREFIX=:
 endif
 
-SRCS=$(wildcard $(SRC_DIR)/**/*.cpp)
+SRCS=$(wildcard $(SRC_DIR)/*.cpp)
 OBJS=$(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
 all: build test
 
 build/tests/init_test: Test/test_init.cpp | build/tests
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $< $(SRCS)
 
 build/tests/create_test: Test/test_create.cpp | build/tests
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $< $(SRCS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	@$(PREFIX) mkdir -p $(@D)

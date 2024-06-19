@@ -54,7 +54,7 @@ namespace scui
         ALL
     };
 
-    char* GetLogLevelString(LogLevel l) {
+    inline char* GetLogLevelString(LogLevel l) {
         switch (l)
         {
         case LogLevel::TRACE:

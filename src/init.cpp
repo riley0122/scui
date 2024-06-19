@@ -82,23 +82,23 @@ namespace scui {
     #ifdef _WIN32
     bool Window::WindowsCreate() {
         // Initialize properties
-        const wchar_t CLASS_NAME[] = L"SCUI window class";
+        const LPCSTR CLASS_NAME = "SCUI window class";
 
-        WNDCLASS wc = { };
+        WNDCLASSA wc = { };
 
         wc.lpfnWndProc = WindowProc;
         wc.hInstance = GetModuleHandle(NULL);
         wc.lpszClassName = CLASS_NAME;
 
-        RegisterClass(&wc);
+        RegisterClassA(&wc);
 
-        const wchar_t* window_name = wideStringToCWcharArray(stringToWideString(this->window_name));
+        // const wchar_t* window_name = wideStringToCWcharArray(stringToWideString(this->window_name));
 
         // Create the window
-        HWND hwnd = CreateWindowEx(
+        HWND hwnd = CreateWindowExA(
             0,
             CLASS_NAME,
-            window_name,
+            this->window_name.c_str(),
             WS_OVERLAPPEDWINDOW,
 
             CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
