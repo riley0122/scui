@@ -66,18 +66,20 @@ namespace scui {
         else
             Resize(this->height, h);
 
-        if (PLATFORM == "Windows")
-            return WindowsCreate();
-        else if (PLATFORM == "Linux")
-            return LinuxCreate();
+        #ifdef _WIN32
+        return WindowsCreate();
+        #endif
 
         return false;
     }
 
+    #ifdef __linux__
     bool Window::LinuxCreate() {
         return false;
     }
+    #endif
 
+    #ifdef _WIN32
     bool Window::WindowsCreate() {
         // Initialize properties
         const wchar_t CLASS_NAME[] = L"SCUI window class";
@@ -116,4 +118,5 @@ namespace scui {
 
         return true;
     }
+    #endif
 }

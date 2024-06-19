@@ -21,7 +21,9 @@
 
 namespace scui
 {
+    #ifdef _WIN32
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    #endif
 
     namespace {
         std::wstring stringToWideString(const std::string& str) {
@@ -88,7 +90,12 @@ namespace scui
         unsigned int width;
         unsigned int height;
 
+        #ifdef _WIN32
         bool WindowsCreate();
+        #endif
+
+        #ifdef __linux__
         bool LinuxCreate();
+        #endif
     };
 } // namespace scui
